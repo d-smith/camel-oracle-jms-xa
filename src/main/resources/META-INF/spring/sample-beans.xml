@@ -1,0 +1,76 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+
+
+
+
+
+    <!-- Atomikos
+
+    Important note: to avoid weird 'pauses' and ORA-XXX error against an XE instance of Oracle:
+
+    ~ Run SQL*Plus and login as SYSTEM. You should know what password you’ve used during the installation of Oracle DB XE.
+    ~ Run the command “alter system set processes=150 scope=spfile;” in the SQL*Plus
+    ~ VERY IMPORTANT: Restart the database.
+
+    The above from  http://www.atpeaz.com/index.php/2010/fixing-the-ora-12519-tnsno-appropriate-service-handler-found-error/
+
+    Note that to enlist AQ and JDBC access in the same transaction, we need the connection sources for both
+    the messaging and database systems to be proxied by Atomikos.
+    -->
+
+    <bean id="innerAQconnectionFactory" class="oracle.jms.AQjmsFactory" factory-method="getXAQueueConnectionFactory">
+        <constructor-arg index="0">
+            <ref bean="datasource"/>
+        </constructor-arg>
+    </bean>
+
+    <bean id="AQconnectionFactory" class="com.atomikos.jms.AtomikosConnectionFactoryBean">
+        <property name="uniqueResourceName" value="oracle-jms"/>
+        <property name="xaConnectionFactory" ref="innerAQconnectionFactory"/>
+        <property name="poolSize" value="5"/>
+    </bean>
+
+    <bean id="atomikosDatasource" class="com.atomikos.jdbc.AtomikosDataSourceBean">
+        <property name="uniqueResourceName" value="oracle-db"/>
+        <property name="xaDataSource" ref="datasource"/>
+        <property name="poolSize" value="5"/>
+    </bean>                                                          
+
+    <bean id="datasource" class="oracle.jdbc.xa.client.OracleXADataSource">
+        <property name="user" value="batch"/>
+        <property name="password" value="password"/>
+        <property name="URL" value="jdbc:oracle:thin:@da896009:1521:XE"/>
+    </bean>
+
+    <bean id="jtaTransactionManager" class="org.springframework.transaction.jta.JtaTransactionManager">
+        <property name="transactionManager" ref="transactionManager"/>
+        <property name="userTransaction" ref="userTransaction"/>
+    </bean>
+
+    <bean id="transactionManager" class="com.atomikos.icatch.jta.UserTransactionManager" init-method="init" destroy-method="close">
+        <property name="forceShutdown" value="false"/>
+    </bean>
+
+    <bean id="userTransaction" class="com.atomikos.icatch.jta.UserTransactionImp">
+        <property name="transactionTimeout" value="120"/>
+    </bean>
+
+    <bean id="PROPAGATION_REQUIRED" class="org.apache.camel.spring.spi.SpringTransactionPolicy">
+        <property name="transactionManager" ref="jtaTransactionManager"/>
+        <property name="propagationBehaviorName" value="PROPAGATION_REQUIRED"/>
+    </bean>
+
+
+    <bean id="flakey" class="sample.Flakey"/>
+
+    <bean id="inserter" class="sample.Inserter">
+        <property name="dataSource"  ref="atomikosDatasource"/>
+    </bean>
+
+
+</beans>
