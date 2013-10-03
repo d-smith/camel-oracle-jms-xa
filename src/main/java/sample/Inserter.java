@@ -14,7 +14,7 @@ public class Inserter {
 
 
     private JdbcTemplate jdbcTemplate;
-    private static final String INSERT_SQL = "insert into sample(data) values(?)";
+    private static final String INSERT_SQL = "insert into batch.sample(data) values(?)";
 
     public void setDataSource(DataSource ds) {
         jdbcTemplate = new JdbcTemplate(ds);

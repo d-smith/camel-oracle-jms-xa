@@ -1,0 +1,30 @@
+Here are the commands for setting up the queues... this was done using a user with DBO
+privileges, obviously you would never use this sort of arrangement for a real app...
+you'd apply the principle of least privilege, use a restricted account for runtime access and
+not create or own database objects with that account, etc.
+
+
+begin
+dbms_aqadm.create_queue_table(
+     queue_table=> 'source_qtab',
+     queue_payload_type=>'sys.aq$_jms_text_message');
+end;
+
+begin
+dbms_aqadm.create_queue(
+     queue_name=>'source',
+     queue_table=>'source_qtab'
+);
+end;
+
+begin
+dbms_aqadm.start_queue(queue_name=>'source');
+end;
+
+
+The source table DDL looks like:
+
+create table sample(
+added timestamp default current_timestamp not null,
+data varchar2(4000)
+);

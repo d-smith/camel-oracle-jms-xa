@@ -42,9 +42,12 @@
     </bean>                                                          
 
     <bean id="datasource" class="oracle.jdbc.xa.client.OracleXADataSource">
+
         <property name="user" value="batch"/>
         <property name="password" value="password"/>
         <property name="URL" value="jdbc:oracle:thin:@da896009:1521:XE"/>
+
+
     </bean>
 
     <bean id="jtaTransactionManager" class="org.springframework.transaction.jta.JtaTransactionManager">
