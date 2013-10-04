@@ -47,7 +47,7 @@ public class Sender
         QueueSession qsess = qcon.createQueueSession(false, Session.DUPS_OK_ACKNOWLEDGE);
         Queue queue = ((AQjmsSession) qsess).getQueue("batch", "source");
         QueueSender sender = qsess.createSender(queue);
-        for(int i = 0; i < 1000; i++) {
+        for(int i = 0; i < 100; i++) {
             System.out.println("Send message...");
             TextMessage tm = ((AQjmsSession) qsess).createTextMessage("Hello, Oracle JMS");
             sender.send(tm);

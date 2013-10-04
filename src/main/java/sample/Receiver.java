@@ -39,7 +39,7 @@ public class Receiver
 
         QueueConnection qcon = qfact.createQueueConnection();
         QueueSession qsess = qcon.createQueueSession(false, Session.DUPS_OK_ACKNOWLEDGE);
-        Queue queue = ((AQjmsSession) qsess).getQueue("batch", "source");
+        Queue queue = ((AQjmsSession) qsess).getQueue("batch", "destination");
 
         QueueReceiver queueReceiver = qsess.createReceiver(queue);
         qcon.start();

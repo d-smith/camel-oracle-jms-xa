@@ -4,16 +4,12 @@ import org.apache.camel.builder.RouteBuilder;
 
 
 public class SampleRoute extends RouteBuilder {
-    private static final String COMPONENT_CONFIG =
-            "?connectionFactory=AQconnectionFactory" +
-                    "&transacted=true&transactionManager=#jtaTransactionManager" +
-                    "&concurrentConsumers=5";
     @Override
     public void configure() throws Exception {
-        from("jms:queue:batch.source" + COMPONENT_CONFIG)
+        from("jms:queue:batch.source?concurrentConsumers=5")
                 .to("bean:inserter")
                 .to("bean:flakey")
-                .to("log:sample.log?level=INFO");
+                .to("jms:queue:batch.destination");
 
     }
 }

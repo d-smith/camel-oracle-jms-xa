@@ -4,22 +4,41 @@ you'd apply the principle of least privilege, use a restricted account for runti
 not create or own database objects with that account, etc.
 
 
-begin
-dbms_aqadm.create_queue_table(
-     queue_table=> 'source_qtab',
-     queue_payload_type=>'sys.aq$_jms_text_message');
-end;
+    begin
+    dbms_aqadm.create_queue_table(
+         queue_table=> 'source_qtab',
+         queue_payload_type=>'sys.aq$_jms_text_message');
+    end;
 
-begin
-dbms_aqadm.create_queue(
-     queue_name=>'source',
-     queue_table=>'source_qtab'
-);
-end;
+    begin
+    dbms_aqadm.create_queue(
+         queue_name=>'source',
+         queue_table=>'source_qtab'
+    );
+    end;
 
-begin
-dbms_aqadm.start_queue(queue_name=>'source');
-end;
+    begin
+    dbms_aqadm.start_queue(queue_name=>'source');
+    end;
+
+And
+
+    begin
+    dbms_aqadm.create_queue_table(
+         queue_table=> 'destination_qtab',
+         queue_payload_type=>'sys.aq$_jms_text_message');
+    end;
+
+    begin
+    dbms_aqadm.create_queue(
+         queue_name=>'destination',
+         queue_table=>'destination_qtab'
+    );
+    end;
+
+    begin
+    dbms_aqadm.start_queue(queue_name=>'destination');
+    end;
 
 
 The source table DDL looks like:

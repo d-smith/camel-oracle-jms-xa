@@ -35,6 +35,12 @@
         <property name="poolSize" value="5"/>
     </bean>
 
+    <bean id="jms" class="org.apache.camel.component.jms.JmsComponent">
+        <property name="connectionFactory" ref="AQconnectionFactory"/>
+        <property name="transacted" value="true"/>
+        <property name="transactionManager" ref="jtaTransactionManager"/>
+    </bean>
+
     <bean id="atomikosDatasource" class="com.atomikos.jdbc.AtomikosDataSourceBean">
         <property name="uniqueResourceName" value="oracle-db"/>
         <property name="xaDataSource" ref="datasource"/>
