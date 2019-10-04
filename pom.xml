@@ -9,7 +9,7 @@
     <name>oracle-jms-route</name>
 
     <properties>
-        <camel.version>2.10.0.redhat-60024</camel.version>
+        <camel.version>2.24.2</camel.version>
     </properties>
 
 
